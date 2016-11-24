@@ -151,8 +151,9 @@ namespace FullscreenForms
             comboBox1.DataSource = resolutionsXY;
             comboBox1.DisplayMember = "Text";
             comboBox1.ValueMember = "Index";
-
-            comboBox1.SelectedItem = lastResObj; //set lastSelected resolution
+            
+            if (lastResObj != null)
+                comboBox1.SelectedItem = lastResObj; //set lastSelected resolution
         }
 
         private void button1_Click(object sender, EventArgs e)
