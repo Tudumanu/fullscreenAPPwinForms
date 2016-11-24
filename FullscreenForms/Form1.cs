@@ -9,11 +9,35 @@ namespace FullscreenForms
 {
     public partial class GuyGame : Form
     {
+        const int MIN_WIDTH = 1280; //HD 16:9 minimum (1280x720)
+        const int MIN_HEIGHT = 720;
         const string currentArgument = "/V /S";
         const string listArgument = "/V /L";
         const string changeArgument = "/X:{0} /Y:{1} /D";
         const string qResPath = @"..\QRes.exe";
         const string gamePath = @"C:\Program Files (x86)\guytest\GuyGame\GuyGame.exe";
+
+        public class Resolucao
+        {
+            public int Index { get; set; }
+            public string Value { get; set; }
+
+            public Resolucao(int index, string val)
+            {
+                Index = index;
+                Value = val;
+            }
+
+            public override bool Equals(Object obj)
+            {
+                // Check for null values and compare run-time types.
+                if (obj == null || GetType() != obj.GetType())
+                    return false;
+
+                Resolucao res = (Resolucao)obj;
+                return Value.Equals(res.Value);
+            }
+        }
 
         static Process proc = new Process
         {
@@ -40,6 +64,7 @@ namespace FullscreenForms
         static string currY = "";
         static List<string> resolutionsX = new List<string>();
         static List<string> resolutionsY = new List<string>();
+        static List<Resolucao> resolutionsXY = new List<Resolucao>();
 
         public GuyGame()
         {
@@ -77,13 +102,39 @@ namespace FullscreenForms
             //GET THE AVAILABLE MODES OS WIDHT AN HEIGHT
             proc.StartInfo.Arguments = listArgument;
             startQres(addResolutionsArray);
-            comboBox1.DataSource = resolutionsX;
+
+            for(int i=0; i<resolutionsX.Count; i++)
+            {
+                string val = resolutionsX[i] + "x" + resolutionsY[i];
+                Resolucao res = new Resolucao(i, val);
+                if (resolutionsXY.FindIndex(res.Equals) < 0)
+                {
+                    int x = -1;
+                    int y = -1;
+                    Int32.TryParse(resolutionsX[i], out x);
+                    Int32.TryParse(resolutionsY[i], out y);
+                    if (x >= MIN_WIDTH && y >= MIN_HEIGHT)
+                        resolutionsXY.Add(res);
+                }
+            }
+
+            resolutionsXY.Reverse();
+
+            comboBox1.DataSource = resolutionsXY;
+            comboBox1.DisplayMember = "Value";
+            comboBox1.ValueMember = "Index";
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(comboBox1.SelectedIndex.ToString() + " a" + comboBox1.SelectedItem.ToString() + " b" + comboBox1.SelectedText.ToString() + " c" + comboBox1.SelectedValue.ToString());
-            return;
+            int selectedIndex = -1;
+            Int32.TryParse(comboBox1.SelectedValue.ToString(), out selectedIndex);
+
+            if (selectedIndex < 0)
+            {
+                MessageBox.Show("Resolution selected ERROR!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
             //Hide this console window
             this.Hide();
@@ -93,8 +144,7 @@ namespace FullscreenForms
             startQres(saveResolution);
 
             //SET THE "BEST" RESOLUTION AVAILABLE (OR ALLOW USER TO PICK ONE)
-            int index = resolutionsX.FindIndex("1024".Equals);
-            proc.StartInfo.Arguments = String.Format(changeArgument, resolutionsX[index], resolutionsY[index]);
+            proc.StartInfo.Arguments = String.Format(changeArgument, resolutionsX[selectedIndex], resolutionsY[selectedIndex]);
             proc.Start();
             proc.WaitForExit();
 
@@ -143,9 +193,5 @@ namespace FullscreenForms
             this.Close();
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }
