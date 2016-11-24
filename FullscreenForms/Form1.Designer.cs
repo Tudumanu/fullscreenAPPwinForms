@@ -38,9 +38,9 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(167, 157);
+            this.button1.Location = new System.Drawing.Point(12, 485);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(153, 63);
+            this.button1.Size = new System.Drawing.Size(150, 60);
             this.button1.TabIndex = 0;
             this.button1.Text = "START";
             this.button1.UseVisualStyleBackColor = true;
@@ -49,9 +49,9 @@
             // button2
             // 
             this.button2.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(167, 485);
+            this.button2.Location = new System.Drawing.Point(318, 485);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(153, 63);
+            this.button2.Size = new System.Drawing.Size(150, 60);
             this.button2.TabIndex = 1;
             this.button2.Text = "EXIT";
             this.button2.UseVisualStyleBackColor = true;
@@ -62,9 +62,9 @@
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(167, 278);
+            this.comboBox1.Location = new System.Drawing.Point(110, 300);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(153, 27);
+            this.comboBox1.Size = new System.Drawing.Size(260, 27);
             this.comboBox1.TabIndex = 2;
             // 
             // label1
@@ -72,11 +72,11 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label1.Location = new System.Drawing.Point(167, 259);
+            this.label1.Location = new System.Drawing.Point(107, 281);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(78, 16);
+            this.label1.Size = new System.Drawing.Size(79, 16);
             this.label1.TabIndex = 3;
-            this.label1.Text = "Resolução:";
+            this.label1.Text = "Resolution:";
             // 
             // GuyGame
             // 

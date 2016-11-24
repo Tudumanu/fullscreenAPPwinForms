@@ -14,18 +14,21 @@ namespace FullscreenForms
         const string currentArgument = "/V /S";
         const string listArgument = "/V /L";
         const string changeArgument = "/X:{0} /Y:{1} /D";
-        const string qResPath = @"..\QRes.exe";
-        const string gamePath = @"C:\Program Files (x86)\guytest\GuyGame\GuyGame.exe";
+        const string qResPath = @"util\QRes.exe";
+        const string gamePath = @"game\GuyGame.exe";
+        const string resFileName = @"util\data";
 
         public class Resolucao
         {
             public int Index { get; set; }
             public string Value { get; set; }
+            public string Text { get; set; }
 
-            public Resolucao(int index, string val)
+            public Resolucao(int index, string val, string text)
             {
                 Index = index;
                 Value = val;
+                Text = text;
             }
 
             public override bool Equals(Object obj)
@@ -99,6 +102,19 @@ namespace FullscreenForms
                 return;
             }
 
+            //GET THE CURRENT WIDTH AND HEIGHT IN PIXELS AND SAVE
+            proc.StartInfo.Arguments = currentArgument;
+            startQres(saveResolution);
+
+            //FILE, GET LAST SELECTED RESOLUTION
+            string lastRes = "";
+            Resolucao lastResObj = null;
+            try {
+                lastRes = File.ReadAllText(resFileName);
+            } catch (Exception) {
+                //fileNotFound 
+            }
+
             //GET THE AVAILABLE MODES OS WIDHT AN HEIGHT
             proc.StartInfo.Arguments = listArgument;
             startQres(addResolutionsArray);
@@ -106,7 +122,13 @@ namespace FullscreenForms
             for(int i=0; i<resolutionsX.Count; i++)
             {
                 string val = resolutionsX[i] + "x" + resolutionsY[i];
-                Resolucao res = new Resolucao(i, val);
+                string text = val;
+
+                //check current resolution with list
+                if (val.Equals(currX+"x"+currY))
+                    text += " (current)";
+
+                Resolucao res = new Resolucao(i, val, text);
                 if (resolutionsXY.FindIndex(res.Equals) < 0)
                 {
                     int x = -1;
@@ -114,15 +136,23 @@ namespace FullscreenForms
                     Int32.TryParse(resolutionsX[i], out x);
                     Int32.TryParse(resolutionsY[i], out y);
                     if (x >= MIN_WIDTH && y >= MIN_HEIGHT)
+                    {
                         resolutionsXY.Add(res);
+
+                        //save lastSeleted resolution obj
+                        if (val.Equals(lastRes))
+                            lastResObj = res;
+                    } 
                 }
             }
 
             resolutionsXY.Reverse();
 
             comboBox1.DataSource = resolutionsXY;
-            comboBox1.DisplayMember = "Value";
+            comboBox1.DisplayMember = "Text";
             comboBox1.ValueMember = "Index";
+
+            comboBox1.SelectedItem = lastResObj; //set lastSelected resolution
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -139,11 +169,14 @@ namespace FullscreenForms
             //Hide this console window
             this.Hide();
 
-            //GET THE CURRENT WIDTH AND HEIGHT IN PIXELS AND SAVE
-            proc.StartInfo.Arguments = currentArgument;
-            startQres(saveResolution);
+            //FILE, SAVE THE RESOLUTION SELECTED AS LAST_SELECTED
+            try {
+                File.WriteAllText(resFileName, resolutionsX[selectedIndex] + "x" + resolutionsY[selectedIndex]);
+            } catch(Exception) {
+                //I/O Error, cannot write to folder
+            }
 
-            //SET THE "BEST" RESOLUTION AVAILABLE (OR ALLOW USER TO PICK ONE)
+            //SET THE RESOLUTION USER SELECTED
             proc.StartInfo.Arguments = String.Format(changeArgument, resolutionsX[selectedIndex], resolutionsY[selectedIndex]);
             proc.Start();
             proc.WaitForExit();
